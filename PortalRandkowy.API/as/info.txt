@@ -1,6 +1,6 @@
 I WSTĘP - INSTALACJA NARZĘDZI I PROGRAMÓW 
 -----------------------------------------
-AKTUALNA: Zestaw .NET Core SDK (3.0.100)
+AKTUALNA: Zestaw .NET Core SDK (3.0.1)
 https://github.com/mariuszjurczenko
 
 
@@ -170,9 +170,75 @@ remote: Resolving deltas: 100% (1/1), done.
 14)
 Tworzymy model Value.
 
+  namespace PortalRandkowy.API.Models
+  {
+      public class Value
+      {
+          public int Id { get; set; }
+          public string Name  { get; set; }
+
+      }
+  }
 
 15)
 Połączenie z bazą danych.
+
+namespace PortalRandkowy.API.Data
+{
+    public class DataContext : DbContext
+    {
+        public DataContext(DbContextOptions<DataContext> options) : base(options){}
+
+        public DbSet<Value> Values { get; set; }
+    }
+}
+
+
+16)
+Teraz musimy przejść do naszej klasy Startup.cs i zarejestrować nasz DbContext.
+- dodajemy więc do kolekcji servisów DbContext.
+
+
+       public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddDbContext<DataContext>(x => x.UseSqlite("Connectionstring"))    
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+        }
+
+
+17)
+UseSqlite, jest nierozpoznawalny, dlatego musimy poprzez nuget dodać odpowiednie zalrzności.
+CTR+SHIF+P -> nuget packet manager: add package
+- chcemy dodać pakiet do Sqlite:
+Microsoft.EntityFrameworkCore.Sqlite
+versin 2.2.4
+Success!
+
+18)
+- jeśli są problemy z pobieraniem paiketów.
+RESTORE ALL PROJECT.
+
+
+19)
+- budujemy projekt aby sprawdzić czy nie ma błędów.
+dotnet build
+
+  Ukończono przywracanie w elemencie 765,58 ms (C:\dev\dotnet\PortalRandkowy\PortalRandkowy.API\PortalRandkowy.API.csproj).
+  PortalRandkowy.API -> C:\dev\dotnet\PortalRandkowy\PortalRandkowy.API\bin\Debug\netcoreapp2.2\PortalRandkowy.API.dll
+
+Kompilacja powiodła się.
+    Ostrzeżenia: 0
+    Liczba błędów: 0
+
+
+20)
+
+
+
+
+
+
+
 
 
 
