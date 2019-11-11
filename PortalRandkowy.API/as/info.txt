@@ -1,0 +1,194 @@
+I WSTĘP - INSTALACJA NARZĘDZI I PROGRAMÓW 
+-----------------------------------------
+AKTUALNA: Zestaw .NET Core SDK (3.0.100)
+https://github.com/mariuszjurczenko
+
+
+
+
+1)
+- instalujemy starszą wersję (2.2).NET 
+bo tak jes używana w przykaładach.
+Na wersji (3.0) przykłady będą miały błedy. 
+
+1a)
+dodntet --version
+Zestaw .NET Core SDK (2.2)
+
+
+2)
+nodejs  --vesrison
+3)
+download vscode 
+instalujemy extendsion:
+-> C# for Visual Studio Code (powered by OmniSharp).
+-> C# IDE Extensions for VSCode
+-> nuget-package-manager
+-> Angular 8 Snippets
+-> Angular Files
+-> Angular Language Service
+-> angular2-switcher
+-> Auto Rename Tag
+-> Bracket Pair Colorizer
+-> Debugger for Chrome
+-> Material Icon Theme
+-> Path Intellisense
+-> Prettier Formatter for Visual Studio Code
+-> TSLint support for Visual Studio Code
+
+4)
+download postman
+download sql lite
+
+
+II
+------------------------------------------
+II TWORZENIE PROJEKTU PORTALU RANDKOWEGO
+- będziemy tworzyć nowy projekt .net core web api za pomocą cli.
+
+1)
+C:\dev\dotnet\PortalRandkowy>dotnet new webapi -o PortalRandkowy.API -n PortalRandkowy.API
+The template "ASP.NET Core Web API" was created successfully.
+Processing post-creation actions...
+Running 'dotnet restore' on PortalRandkowy.API\PortalRandkowy.API.csproj...
+  Ukończono przywracanie w elemencie 61,65 ms (C:\dev\dotnet\PortalRandkowy\PortalRandkowy.API\PortalRandkowy.API.csproj).
+Restore succeeded.
+C:\dev\dotnet\PortalRandkowy>
+
+2)
+- odpalamy w vs-code
+c:\dev\dotnet\PortalRandkowy>code .
+
+
+3)
+C:\dev\dotnet\PortalRandkowy\PortalRandkowy.API>dotnet run
+.NET(3.0)
+BROWSER
+https://localhost:5001/WeatherForecast
+
+[{"date":"2019-11-12T21:08:30.2919024+01:00","temperatureC":32,"temperatureF":89,"summary":"Scorching"},{"date":"2019-11-13T21:08:30.2919315+01:00","temperatureC":-4,"temperatureF":25,"summary":"Bracing"},{"date":"2019-11-14T21:08:30.2919322+01:00","temperatureC":-20,"temperatureF":-3,"summary":"Balmy"},{"date":"2019-11-15T21:08:30.2919326+01:00","temperatureC":31,"temperatureF":87,"summary":"Cool"},{"date":"2019-11-16T21:08:30.2919329+01:00","temperatureC":18,"temperatureF":64,"summary":"Hot"}]
+
+
+
+
+3a)
+.NET(2.2)
+http://localhost:5000/api/Values
+
+
+
+4)
+- rezygnujemh z https.
+lounch.settings
+"applicationUrl": "https://localhost:5001;http://localhost:5000",
+"applicationUrl": "http://localhost:5000",
+
+
+
+5)
+http://localhost:5000/WeatherForecast
+[{"date":"2019-11-12T21:13:57.7511092+01:00","temperatureC":50,"temperatureF":121,"summary":"Warm"},{"date":"2019-11-13T21:13:57.7552457+01:00","temperatureC":23,"temperatureF":73,"summary":"Sweltering"},{"date":"2019-11-14T21:13:57.7552527+01:00","temperatureC":30,"temperatureF":85,"summary":"Chilly"},{"date":"2019-11-15T21:13:57.7552533+01:00","temperatureC":20,"temperatureF":67,"summary":"Cool"},{"date":"2019-11-16T21:13:57.7552536+01:00","temperatureC":26,"temperatureF":78,"summary":"Hot"}]
+
+6)
+Generujemy wyjątek poto by obejżeć stronę wyjątku w trybie dev.
+
+    "PortalRandkowy.API": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "weatherforecast",
+      "applicationUrl": "http://localhost:5000",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+
+
+        [HttpGet]
+        public IEnumerable<WeatherForecast> Get()
+        {
+             throw new Exception("Generujemy wyjątek");
+            var rng = new Random();
+            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+            {
+                Date = DateTime.Now.AddDays(index),
+                TemperatureC = rng.Next(-20, 55),
+                Summary = Summaries[rng.Next(Summaries.Length)]
+            })
+            .ToArray();
+        }
+
+
+7)
+W trybie produkcyjnym nie zobaczymy szczegółów opisu błędu a tym bardziej kodu.
+http://localhost:5000/WeatherForecast
+BROWSER:
+Ta strona nie działaSerwer localhost nie może teraz obsłużyć tego żądania.
+HTTP ERROR 500
+
+
+8)
+C:\dev\dotnet\PortalRandkowy\PortalRandkowy.API>dotnet watch run
+- modyfikujemy kod w trakcie utuchomienia servra i on reaguje na zmiany, raz wyświetla a raz nie wyświetla wyjątku tylko poprawne wartości
+zależy to od tego czy zakomentujemy czy nie zakomentujemy wyjątku.
+throw new Exception("Generujemy wyjątek");
+
+
+
+9)
+C:\dev\dotnet\PortalRandkowy
+.git -inicjalizujemy gita
+.gitgnore - dodajemy i uzupełniamy aby nie dodawać do repozytorim zbędnych plików.
+
+10)
+zawartość pliku .gitgnore
+.vscode
+bin
+obj
+*.db
+wwwroot
+
+11)
+- gita możemy obsłużyć w konsli lub korzystając z vscode.
+teraz możemy przejść do repozytoeium gita mamay 10 plików do dodania a nie 100.
+git add.
+git commit -m "Utworzenie Projektu Portal Randkowy Web Api"
+
+
+12)
+- oddaliśmy pliki do naszego repozytorium lokalnego i mamy wersjonowanie kodu.
+
+
+13)
+- tworzymy na githubie nowe repozytorieum o nazwie PortalRandkowy
+- wysyłamy pliki do zdalnego repozytorium.
+C:\dev\dotnet\PortalRandkowy>git remote add origin https://github.com/andrzej-sedzik-dev/PortalRandkowy.git
+git push -u origin master
+
+C:\dev\dotnet\PortalRandkowy>git push -u origin master
+remote: Resolving deltas: 100% (1/1), done.
+
+
+14)
+Tworzymy model Value.
+
+
+15)
+Połączenie z bazą danych.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
