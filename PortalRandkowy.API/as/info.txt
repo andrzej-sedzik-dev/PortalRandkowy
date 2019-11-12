@@ -307,6 +307,359 @@ Dodajemy wartośći do tabli Values.
 - zamykamy bazę danych.
 
 28)
+ValuesController.cs
+- dodajmy konstruktor i zmienną
+
+        private readonly DataContext _context;
+
+        public ValuesController(DataContext context)
+        {
+            _context = context;
+        }
+
+
+29)
+BEFORE:
+
+       // GET api/values
+        [HttpGet]
+        public ActionResult<IEnumerable<string>> Get()
+        {
+            return new string[] { "value1", "value2" };
+        }
+
+
+
+30)
+AFTER:
+
+        [HttpGet]
+        public IActionResult GetValues()
+        {
+
+            var values = _context.Values.ToList();
+            return Ok(values);
+        }
+
+
+
+31)
+BEFORE:
+
+        // GET api/values/5
+        [HttpGet("{id}")]
+        public ActionResult<string> Get(int id)
+        {
+            return "value";
+        }
+
+
+32)
+AFTER:
+
+
+        // GET api/values/5
+        [HttpGet("{id}")]
+        public IActionResult GetValue(int id)
+        {
+            var value = _context.Values.FirstOrDefault(x => x.Id == id);
+            return Ok(value);
+        }
+
+33)
+BEFORE:
+        // POST api/values
+        [HttpPost]
+        public void Post([FromBody] string value)
+        {
+        }
+AFTER:
+
+  // POST api/values
+        [HttpPost]
+        public void AddValue([FromBody] Value value)
+        {
+              _context.Values.Add(value);
+              _context.SaveChanges();  
+        }
+
+
+34)
+BEFORE:
+        // PUT api/values/5
+        [HttpPut("{id}")]
+        public void Put(int id, [FromBody] string value)
+        {
+        }
+
+
+35)
+AFTER:
+
+        // PUT api/values/5
+        [HttpPut("{id}")]
+        public void EditValue(int id, [FromBody] Value value)
+        {
+            var data = _context.Values.Find(id);
+            data.Name = value.Name;
+            _context.Values.Update(data);
+            _context.SaveChanges();
+        }
+
+36)
+
+        // DELETE api/values/5
+        [HttpDelete("{id}")]
+        public void DeleteValue(int id)
+        {
+            var data = _context.Values.Find(id);
+            _context.Values.Remove(data);
+            _context.SaveChanges();
+        }
+
+
+
+
+37)
+W przypadku dodawania wartośći również moglibyśmy dodać status ActionResult.
+
+        // POST api/values
+        [HttpPost]
+        public IActionResult AddValue([FromBody] Value value)
+        {
+              _context.Values.Add(value);
+              _context.SaveChanges(); 
+              return Ok(value); 
+        }
+
+
+38)
+To samo w przypadku edycji.
+
+        // PUT api/values/5
+        [HttpPut("{id}")]
+        public IActionResult EditValue(int id, [FromBody] Value value)
+        {
+            var data = _context.Values.Find(id);
+            data.Name = value.Name;
+            _context.Values.Update(data);
+            _context.SaveChanges();
+            return Ok(data); 
+        }
+
+
+
+39)
+Przy usówaniu również:
+
+        // DELETE api/values/5
+        [HttpDelete("{id}")]
+        public IActionResult DeleteValue(int id)
+        {
+            var data = _context.Values.Find(id);
+            _context.Values.Remove(data);
+            _context.SaveChanges();
+            return Ok(data); 
+        }
+
+40)
+Mamy już oprogramowane metody, możemy je wypróbować na postmanie.
+Teraz będziemy mogli wyslać zapytania do aplikacji, bez konieczności posiadania klienta.
+
+41)
+[GET]
+POSTMAN:
+http://localhost:5000/api/values
+
+
+[
+    {
+        "id": 1,
+        "name": "wartosc 1"
+    },
+    {
+        "id": 2,
+        "name": "wartosc 2"
+    },
+    {
+        "id": 3,
+        "name": "wartosc 3"
+    },
+    {
+        "id": 4,
+        "name": "wartosc 4"
+    },
+    {
+        "id": 5,
+        "name": "wartosc 5"
+    }
+]
+
+
+42)
+[GET]
+POSTMAN:
+http://localhost:5000/api/values/5
+
+
+    {
+        "id": 5,
+        "name": "wartosc 5"
+    }
+
+
+43)
+[POST]
+POSTMAN:
+http://localhost:5000/api/values
+/body/row/json.
+
+
+{
+	"Name": "wartość testowa"
+}
+
+SEND
+200OK
+{
+    "id": 6,
+    "name": "wartość testowa"
+}
+
+
+
+44)
+[GET]
+POSTMAN:
+http://localhost:5000/api/values
+
+
+[
+    {
+        "id": 1,
+        "name": "wartosc 1"
+    },
+    {
+        "id": 2,
+        "name": "wartosc 2"
+    },
+    {
+        "id": 3,
+        "name": "wartosc 3"
+    },
+    {
+        "id": 4,
+        "name": "wartosc 4"
+    },
+    {
+        "id": 5,
+        "name": "wartosc 5"
+    }
+       {
+        "id": 6,
+        "name": "wartosc testowa"
+    }
+       {
+        "id": 7,
+        "name": "wartosc testowa"
+    }
+]
+
+
+
+45)
+[PUT]
+http://localhost:5000/api/values/7
+/body/row/json.
+{
+    "id": 7,
+    "name": "wartość testowa edycja"
+}
+
+
+46)
+[DELETE]
+localhost:5000/api/values/6
+
+[
+    {
+        "id": 1,
+        "name": "wartosc 1"
+    },
+    {
+        "id": 2,
+        "name": "wartosc 2"
+    },
+    {
+        "id": 3,
+        "name": "wartosc 3"
+    },
+    {
+        "id": 4,
+        "name": "wartosc 4"
+    },
+    {
+        "id": 5,
+        "name": "wartosc 5"
+    },
+    {
+        "id": 7,
+        "name": "wartość testowa edycja"
+    }
+]
+
+
+47)
+Jeśłi sprubójemy usówać wartość której nie ma
+500Internal Server Error
+174ms
+21.85 KB
+An unhandled exception occurred while processing the request.
+ArgumentNullException: Value cannot be null.
+Parameter name: entity
+
+
+48)
+BEFORE:
+        public IActionResult DeleteValue(int id)
+        {
+            var data = _context.Values.Find(id);
+            _context.Values.Remove(data);
+            _context.SaveChanges();
+            return Ok(data); 
+        }
+
+AFTER:
+
+        // DELETE api/values/5
+        [HttpDelete("{id}")]
+        public IActionResult DeleteValue(int id)
+        {
+            var data = _context.Values.Find(id);
+
+            if(data == null)
+            return NoContent();
+
+
+            _context.Values.Remove(data);
+            _context.SaveChanges();
+            return Ok(data); 
+        }
+
+
+
+
+49)
+[DELETE]
+localhost:5000/api/values/6
+
+
+STATUS: 204 No Content
+
+
+
+
+
 
 
 
