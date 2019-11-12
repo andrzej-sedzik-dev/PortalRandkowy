@@ -232,16 +232,81 @@ Kompilacja powiodła się.
 
 
 20)
+Przygotowujemy źródło bazy danych.
+application.json
+
+"ConnectionStrings":{
+    "DefaultConnection": "Data Source = PortalRandkowy.db"
+  },
+
+21)
+Konfigurjmey połąćzenie
+Startup.cs
+
+public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddDbContext<DataContext>(x => x.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));   
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+        }
+
+22)
+TWORZYMY BAZĘ DANYCH W TERMINALU.
+
+C:\dev\dotnet\PortalRandkowy>dodnet ef
+'dodnet' is not recognized as an internal or external command,
+operable program or batch file.
+
+C:\dev\dotnet\PortalRandkowy>dotnet ef
+
+                     _/\__       
+               ---==/    \\      
+         ___  ___   |.    \|\
+        | __|| __|  |  )   \\\
+        | _| | _|   \_/ |  //|\\
+        |___||_|       /   \\\/\\
+
+Commands:
+  database    Commands to manage the database.
+  dbcontext   Commands to manage DbContext types.
+  migrations  Commands to manage migrations.
 
 
+23)
+
+C:\dev\dotnet\PortalRandkowy>dotnet ef migrations add InitialCreateDb
+No project was found. Change the current working directory or use the --project option.
 
 
+24)
+C:\dev\dotnet\PortalRandkowy\PortalRandkowy.API>dotnet ef migrations add InitialCreateDb
+info: Microsoft.EntityFrameworkCore.Infrastructure[10403]
+      Entity Framework Core 2.2.6-servicing-10079 initialized 'DataContext' using provider 'Microsoft.EntityFrameworkCore.Sqlite' with options: None
+Done. To undo this action, use 'ef migrations remove'
 
 
+25)
+Mamy już migrację teraz na podstawie tej migracji utworzymy sobie baze danych.
+C:\dev\dotnet\PortalRandkowy\PortalRandkowy.API>dotnet ef database update
+- baza danych zostanie utworzona i zotaną wykorzystane wszystkie migracje obecnie mamay jedną
+
+26)
+W naszym projekcie powstł plik PortalRandkowy.db
+- aby przeglądać zawartość bazy danych instalujemy dbbrowser i teraz go urzyjemy
+https://sqlitebrowser.org/blog/version-3-11-2-released/
 
 
+27)
+Dodajemy wartośći do tabli Values.
 
+1	wartosc 1
+2	wartosc 2
+3	wartosc 3
+4	wartosc 4
+5	wartosc 5
 
+- zamykamy bazę danych.
+
+28)
 
 
 
